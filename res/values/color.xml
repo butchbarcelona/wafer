@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="accent_material_dark">#FF4081</color>
+    <color name="abc_input_method_navigation_guard">#303F9F</color>
+    <color name="colorAccent">#3F51B5</color>
+
+    <item name="blue" type="color">#FF33B5E5</item>
+    <item name="purple" type="color">#FFAA66CC</item>
+    <item name="green" type="color">#FF99CC00</item>
+    <item name="orange" type="color">#FFFFBB33</item>
+    <item name="red" type="color">#FFFF4444</item>
+    <item name="darkblue" type="color">#FF0099CC</item>
+    <item name="darkpurple" type="color">#FF9933CC</item>
+    <item name="darkgreen" type="color">#FF669900</item>
+    <item name="darkorange" type="color">#FFFF8800</item>
+    <item name="darkred" type="color">#FFCC0000</item>
+
+    <color name="actionbar_blue">#185a8c</color>
+    <color name="actionbar_blue_sub">#1372aa</color>
+
+
+    <color name="logo_green_light">#86c745</color>
+    <color name="logo_orange_dark">#f3602a</color>
+    <color name="logo_orange_light">#fdaf17</color>
+    <color name="logo_green_dark">#46ad76</color>
+    <color name="logo_purple">#a436a7</color>
+
+</resources>

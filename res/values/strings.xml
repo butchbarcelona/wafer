@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ToggleButton">ToggleButton</string>
+    <string name="app_name">Coin Operated Baggage Locker</string>
+    <string name="sms_finished">Time is up! Your locker is now open. </string>
+    <string name="sms_5mins">Your locker has 5 mins left.</string>
+    <string name="sms_10mins">Your locker has 10 mins left.</string>
+</resources>
