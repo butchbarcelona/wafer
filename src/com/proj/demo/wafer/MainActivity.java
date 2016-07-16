@@ -1,9 +1,14 @@
 package com.proj.demo.wafer;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
 import android.support.v4.app.*;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -54,7 +59,7 @@ public class MainActivity extends BaseActivity implements BaseActivity.USBConnec
     public static SentReceiver sentReceiver = null;
     public static DeliverReceiver deliverReceiver = null;
 
-    int credits = 5;
+    int credits = 0;
 
     BaseFragment currFrag;
     TextView tvCredits;
@@ -64,11 +69,18 @@ public class MainActivity extends BaseActivity implements BaseActivity.USBConnec
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
         setContentView(R.layout.activity_main);
+        /*getActionBar().hide();*/
         // get an instance of FragmentTransaction from your Activity
         FragmentManager fragmentManager =
                 this.getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+
 
         if (savedInstanceState == null) {
             currFrag = new MenuFragment();
@@ -81,7 +93,10 @@ public class MainActivity extends BaseActivity implements BaseActivity.USBConnec
 
         imgConnection = (ImageView) findViewById(R.id.img_connection);
         this.setListener(this);
+
     }
+
+
 
     public int getCredits() {
         return credits;
@@ -183,8 +198,11 @@ public class MainActivity extends BaseActivity implements BaseActivity.USBConnec
         int nMsg = ByteBuffer.wrap(buffer).order(ByteOrder.LITTLE_ENDIAN).getInt(); //.asCharBuffer().toString();
         Log.d(MainActivity.APP_CODE, nMsg + "");
 */
+        int nMsg = ByteBuffer.wrap(buffer).order(ByteOrder.LITTLE_ENDIAN).getInt();
+        int n = nMsg;//buffer[0];
 
-        int n = buffer[0];
+
+
         if(n == 5){
             credits += 5;
             tvCredits.setText(credits+"");

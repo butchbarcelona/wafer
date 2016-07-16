@@ -17,6 +17,7 @@ import android.widget.ToggleButton;
 
 import com.android.future.usb.UsbAccessory;
 import com.android.future.usb.UsbManager;
+import com.proj.demo.wafer.CustomAlertDialogBuilder;
 import com.proj.wafer.BuildConfig;
 import com.proj.wafer.R;
 
@@ -117,7 +118,7 @@ public class ADKActivity extends Activity {
     @Override
     public void onBackPressed() {
         if (mAccessory != null) {
-            new AlertDialog.Builder(this)
+            new CustomAlertDialogBuilder(this)
                     .setIcon(android.R.drawable.ic_dialog_alert)
                     .setTitle("Closing Activity")
                     .setMessage("Are you sure you want to close this application?")
@@ -249,7 +250,7 @@ public class ADKActivity extends Activity {
     }
     public void showDialog(Context ctx, String message, String okButton
             , DialogInterface.OnClickListener positiveListener) {
-        new AlertDialog.Builder(ctx)
+        new CustomAlertDialogBuilder(ctx)
                 .setTitle("Arduino")
                 .setMessage(message)
                 .setPositiveButton(okButton, positiveListener)

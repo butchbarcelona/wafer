@@ -13,6 +13,7 @@ import android.os.ParcelFileDescriptor;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.android.future.usb.UsbAccessory;
@@ -28,8 +29,6 @@ import java.io.IOException;
 
 public abstract class BaseActivity extends FragmentActivity{
 
-
-
     USBConnectListener listener;
 
     @Override
@@ -39,6 +38,7 @@ public abstract class BaseActivity extends FragmentActivity{
         mPermissionIntent = PendingIntent.getBroadcast(this, 0, new Intent(ACTION_USB_PERMISSION), 0);
         IntentFilter filter = new IntentFilter(ACTION_USB_PERMISSION);
         filter.addAction(UsbManager.ACTION_USB_ACCESSORY_DETACHED);
+        filter.addAction(Intent.ACTION_UMS_DISCONNECTED);
         registerReceiver(mUsbReceiver, filter);
 
     }
@@ -106,13 +106,15 @@ public abstract class BaseActivity extends FragmentActivity{
                     }
                     mPermissionRequestPending = false;
                 }
-            } else if (UsbManager.ACTION_USB_ACCESSORY_DETACHED.equals(action)) {
+            } else if (UsbManager.ACTION_USB_ACCESSORY_DETACHED.equals(action) || Intent.ACTION_UMS_DISCONNECTED.equals(action)) {
+                Log.d(TAG, "Accessory disconnected");
                 UsbAccessory accessory = UsbManager.getAccessory(intent);
                 if (accessory != null && accessory.equals(mAccessory))
                     closeAccessory();
             }
         }
     };
+
 
 
     protected void openAccessory(UsbAccessory accessory) {
@@ -192,21 +194,30 @@ public abstract class BaseActivity extends FragmentActivity{
         public void run() {
             while (running) {
                 try {
-                    int bytes = mInputStream.read(buffer);
-                    //listener.onDataReceived(buffer);
 
-                    //if (bytes > 3)
-                    { // The message is 4 bytes long
-                        activity.runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
+
+                    final int bytes = mInputStream.read(buffer);
+                    //listener.onDataReceived(buffer);
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
 //                                long timer = ByteBuffer.wrap(buffer).order(ByteOrder.LITTLE_ENDIAN).getLong();
 //                                mTextView.setText(Long.toString(timer));
-                                listener.onDataReceived(buffer);
-                            }
-                        });
-                    }
-                } catch (Exception ignore) {
+                             listener.onDataReceived(buffer);
+                        }
+                    });
+                } catch (final Exception ignore) {
+
+                  /*  activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+//                                long timer = ByteBuffer.wrap(buffer).order(ByteOrder.LITTLE_ENDIAN).getLong();
+//                                mTextView.setText(Long.toString(timer));
+                            Toast.makeText(BaseActivity.this, "Exception!"+ignore.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+
+                        }
+                    });*/
+
                 }
             }
         }

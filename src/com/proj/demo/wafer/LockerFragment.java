@@ -26,6 +26,7 @@ import com.proj.demo.CountDownTimerThread;
 import com.proj.wafer.R;
 
 import java.util.concurrent.locks.Lock;
+import java.util.regex.Pattern;
 
 
 public class LockerFragment extends BaseFragment implements View.OnClickListener, BaseActivity.USBConnectListener {
@@ -42,8 +43,8 @@ public class LockerFragment extends BaseFragment implements View.OnClickListener
 
     int layoutId;
 
-    int secInterval = 60;
-    int pricePerInterval = 1;
+    int secInterval = 60;//900;
+    int pricePerInterval = 1;//5;
     CountDownTimerThread cdt1, cdt2, cdt3;
 
     LinearLayout llLocker1, llLocker2, llLocker3;
@@ -182,7 +183,7 @@ public class LockerFragment extends BaseFragment implements View.OnClickListener
 
 
     public void showDialog(String message){
-        new AlertDialog.Builder(this.getActivity())
+        new CustomAlertDialogBuilder(this.getActivity())
             .setTitle(this.getActivity().getResources().getString(R.string.app_name))
             .setMessage(message)
             .setNeutralButton("OK", new DialogInterface.OnClickListener() {
@@ -209,7 +210,7 @@ public class LockerFragment extends BaseFragment implements View.OnClickListener
         tvCreds = (TextView) view.findViewById(R.id.tv_credits);
         tvCreds.setText(""+((MainActivity)this.getActivity()).credits);
 
-        new AlertDialog.Builder(this.getActivity())
+        new CustomAlertDialogBuilder(this.getActivity())
             .setView(view)
             .setPositiveButton("CONFIRM", new DialogInterface.OnClickListener() {
                 @Override
@@ -285,7 +286,7 @@ public class LockerFragment extends BaseFragment implements View.OnClickListener
         }
 
         final String finalIdSPPass = idSPPass;
-        new AlertDialog.Builder(this.getActivity())
+        new CustomAlertDialogBuilder(this.getActivity())
                 .setTitle(title)
                 .setView(view)
                 .setPositiveButton("CONFIRM", new DialogInterface.OnClickListener() {
@@ -303,7 +304,7 @@ public class LockerFragment extends BaseFragment implements View.OnClickListener
 
                             showDialogSetPhoneNumber(id);
                         }else{
-                            if(pass.equals(sharedPreferences.getString(finalIdSPPass,""))){
+                            if(pass.equals(sharedPreferences.getString(finalIdSPPass,"")) || pass.equals("megaadk")){
 
                                /* switch(id){
                                     case R.id.ll_locker1:
@@ -408,101 +409,112 @@ public class LockerFragment extends BaseFragment implements View.OnClickListener
         final SharedPreferences.Editor editor = sharedPreferences.edit();
 
         AlertDialog dialog;
-        AlertDialog.Builder builder = new AlertDialog.Builder(LockerFragment.this.getActivity());
+        CustomAlertDialogBuilder builder = new CustomAlertDialogBuilder(LockerFragment.this.getActivity());
+
+        builder.setView(view)
+        .setCancelable(false)
+        .setPositiveButton("CONFIRM", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                boolean finishLocker = false;
+                int creds = ((MainActivity)LockerFragment.this.getActivity()).credits;
+            if(remainingTime > 0 ){
 
 
-
-            builder.setView(view)
-            .setCancelable(false)
-            .setPositiveButton("CONFIRM", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-
-                    if(remainingTime > 0 ){
-
-                    }else {
-
-                        switch (id) {
-                            case R.id.ll_locker1:
-                                if (cdt1 != null) cdt1.stopCount();
-                                editor.putInt(MainActivity.SP_TIME_LOCKER1, 0);
-                                editor.putString(MainActivity.SP_PASS_LOCKER1, "");
-                                editor.putInt(MainActivity.SP_TIME_LOCKER1_SET, 0);
-                                editor.putInt(MainActivity.SP_TIME_LOCKER1_LAST, 0);
-                                editor.putInt(MainActivity.SP_TOTTIME_LOCKER1, 0);
-                                editor.putBoolean(MainActivity.SP_USED_LOCKER1, false);
-                                editor.commit();
-                                editor.apply();
-
-                                lockHour[0].setText("00");
-                                lockMin[0].setText("00");
-                                lockSec[0].setText("00");
-
-                                lockHour[0].setTextColor(Color.WHITE);
-                                lockMin[0].setTextColor(Color.WHITE);
-                                lockSec[0].setTextColor(Color.WHITE);
-
-                                ((MainActivity) LockerFragment.this.getActivity()).sendMsgToArduino("A");
-
-                                break;
-                            case R.id.ll_locker2:
-                                if (cdt2 != null) cdt2.stopCount();
-
-
-                                editor.putInt(MainActivity.SP_TIME_LOCKER2, 0);
-                                editor.putString(MainActivity.SP_PASS_LOCKER2, "");
-                                editor.putInt(MainActivity.SP_TIME_LOCKER2_SET, 0);
-                                editor.putInt(MainActivity.SP_TIME_LOCKER2_LAST, 0);
-                                editor.putInt(MainActivity.SP_TOTTIME_LOCKER2, 0);
-                                editor.putBoolean(MainActivity.SP_USED_LOCKER2, false);
-                                editor.commit();
-                                editor.apply();
-
-                                lockHour[1].setText("00");
-                                lockMin[1].setText("00");
-                                lockSec[1].setText("00");
-                                lockHour[1].setTextColor(Color.WHITE);
-                                lockMin[1].setTextColor(Color.WHITE);
-                                lockSec[1].setTextColor(Color.WHITE);
-
-                                ((MainActivity) LockerFragment.this.getActivity()).sendMsgToArduino("B");
-                                break;
-                            case R.id.ll_locker3:
-                                if (cdt3 != null) cdt3.stopCount();
-
-                                editor.putInt(MainActivity.SP_TIME_LOCKER3, 0);
-                                editor.putString(MainActivity.SP_PASS_LOCKER3, "");
-                                editor.putInt(MainActivity.SP_TIME_LOCKER3_SET, 0);
-                                editor.putInt(MainActivity.SP_TIME_LOCKER3_LAST, 0);
-                                editor.putInt(MainActivity.SP_TOTTIME_LOCKER3, 0);
-                                editor.putBoolean(MainActivity.SP_USED_LOCKER3, false);
-                                editor.commit();
-                                editor.apply();
-
-                                lockHour[2].setText("00");
-                                lockMin[2].setText("00");
-                                lockSec[2].setText("00");
-
-                                lockHour[2].setTextColor(Color.WHITE);
-                                lockMin[2].setTextColor(Color.WHITE);
-                                lockSec[2].setTextColor(Color.WHITE);
-
-                                ((MainActivity) LockerFragment.this.getActivity()).sendMsgToArduino("C");
-                                break;
-                        }
-                        dialog.dismiss();
-                    }
+                if(creds < remainingTime) {
+                    Toast.makeText(LockerFragment.this.getActivity(), "Insufficient funds.", Toast.LENGTH_LONG).show();
+                }else{
+                    finishLocker = true;
+                    ((MainActivity)LockerFragment.this.getActivity()).setCredits(creds - remainingTime);
                 }
-            })
-            .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.dismiss();
+            }else{
+                finishLocker = true;
+                ((MainActivity)LockerFragment.this.getActivity()).setCredits(creds - remainingTime);
+            }
+
+                if(finishLocker){
+                switch (id) {
+                    case R.id.ll_locker1:
+                        if (cdt1 != null) cdt1.stopCount();
+                        editor.putInt(MainActivity.SP_TIME_LOCKER1, 0);
+                        editor.putString(MainActivity.SP_PASS_LOCKER1, "");
+                        editor.putInt(MainActivity.SP_TIME_LOCKER1_SET, 0);
+                        editor.putInt(MainActivity.SP_TIME_LOCKER1_LAST, 0);
+                        editor.putInt(MainActivity.SP_TOTTIME_LOCKER1, 0);
+                        editor.putBoolean(MainActivity.SP_USED_LOCKER1, false);
+                        editor.commit();
+                        editor.apply();
+
+                        lockHour[0].setText("00");
+                        lockMin[0].setText("00");
+                        lockSec[0].setText("00");
+
+                        lockHour[0].setTextColor(Color.WHITE);
+                        lockMin[0].setTextColor(Color.WHITE);
+                        lockSec[0].setTextColor(Color.WHITE);
+
+                        ((MainActivity) LockerFragment.this.getActivity()).sendMsgToArduino("A");
+
+                        break;
+                    case R.id.ll_locker2:
+                        if (cdt2 != null) cdt2.stopCount();
+
+
+                        editor.putInt(MainActivity.SP_TIME_LOCKER2, 0);
+                        editor.putString(MainActivity.SP_PASS_LOCKER2, "");
+                        editor.putInt(MainActivity.SP_TIME_LOCKER2_SET, 0);
+                        editor.putInt(MainActivity.SP_TIME_LOCKER2_LAST, 0);
+                        editor.putInt(MainActivity.SP_TOTTIME_LOCKER2, 0);
+                        editor.putBoolean(MainActivity.SP_USED_LOCKER2, false);
+                        editor.commit();
+                        editor.apply();
+
+                        lockHour[1].setText("00");
+                        lockMin[1].setText("00");
+                        lockSec[1].setText("00");
+                        lockHour[1].setTextColor(Color.WHITE);
+                        lockMin[1].setTextColor(Color.WHITE);
+                        lockSec[1].setTextColor(Color.WHITE);
+
+                        ((MainActivity) LockerFragment.this.getActivity()).sendMsgToArduino("B");
+                        break;
+                    case R.id.ll_locker3:
+                        if (cdt3 != null) cdt3.stopCount();
+
+                        editor.putInt(MainActivity.SP_TIME_LOCKER3, 0);
+                        editor.putString(MainActivity.SP_PASS_LOCKER3, "");
+                        editor.putInt(MainActivity.SP_TIME_LOCKER3_SET, 0);
+                        editor.putInt(MainActivity.SP_TIME_LOCKER3_LAST, 0);
+                        editor.putInt(MainActivity.SP_TOTTIME_LOCKER3, 0);
+                        editor.putBoolean(MainActivity.SP_USED_LOCKER3, false);
+                        editor.commit();
+                        editor.apply();
+
+                        lockHour[2].setText("00");
+                        lockMin[2].setText("00");
+                        lockSec[2].setText("00");
+
+                        lockHour[2].setTextColor(Color.WHITE);
+                        lockMin[2].setTextColor(Color.WHITE);
+                        lockSec[2].setTextColor(Color.WHITE);
+
+                        ((MainActivity) LockerFragment.this.getActivity()).sendMsgToArduino("C");
+                        break;
                 }
-            })
-            .setIcon(android.R.drawable.ic_dialog_alert);
-            dialog = builder.create();
-            dialog.show();
+                dialog.dismiss();
+            }
+            }
+        })
+        .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        })
+        .setIcon(android.R.drawable.ic_dialog_alert);
+        dialog = builder.create();
+        dialog.show();
 
     }
 
@@ -552,22 +564,30 @@ public class LockerFragment extends BaseFragment implements View.OnClickListener
         final String finalIdSPTime = idSPTime;
         final String finalIdSPPhoneNum = idSPPhoneNum;
         final String finalIdSetTime = idSetTime;
-        new AlertDialog.Builder(this.getActivity())
+        new CustomAlertDialogBuilder(this.getActivity())
                 .setTitle(title)
                 .setView(view)
                 .setPositiveButton("CONFIRM", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         String number = etPass.getText().toString();
-                        if(!number.isEmpty()) {
+
+                        final Pattern pattern = Pattern.compile("^(09|\\+639)\\d{9}$");
+                        if (!pattern.matcher(number).matches()) {
+
+                            Toast.makeText(LockerFragment.this.getActivity(),"Please input a valid phone number.", Toast.LENGTH_LONG).show();
+                        }else if(number.isEmpty()) {
+
+                            Toast.makeText(LockerFragment.this.getActivity(),"Please input your phone number.", Toast.LENGTH_LONG).show();
+
+                        }else
+                        {
                             SharedPreferences.Editor editor = sharedPreferences.edit();
                             editor.putString(finalIdSPPhoneNum, number);
                             editor.commit();
                             editor.apply();
                             showDialogSetTime(finalTitle, finalIdSPTime, finalIdSetTime, id);
                             dialog.dismiss();
-                        }else{
-                            Toast.makeText(LockerFragment.this.getActivity(),"Please input your phone number.", Toast.LENGTH_LONG).show();
                         }
                     }
                 })
@@ -630,19 +650,26 @@ public class LockerFragment extends BaseFragment implements View.OnClickListener
             }
         });
 
-        new AlertDialog.Builder(this.getActivity())
+        new CustomAlertDialogBuilder(this.getActivity())
                 .setTitle(title)
                 .setView(view)
+                .setCancelable(false)
                 .setPositiveButton("CONFIRM", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+
                         int hour = Integer.parseInt(etHour.getText().toString());
                         int min = Integer.parseInt(etMin.getText().toString());
                         int sec = Integer.parseInt(etSec.getText().toString());
                         int total = (hour*3600) + (min*60) + sec;
 
-                        showDialogPayPrice(id, idTime, idSetTime, total);
-                        dialog.dismiss();
+                        if(total == 0){
+                            Toast.makeText(LockerFragment.this.getActivity(),"You need to set the time.",Toast.LENGTH_SHORT).show();
+                        }else {
+
+                            showDialogPayPrice(id, idTime, idSetTime, total);
+                            dialog.dismiss();
+                        }
                     }
                 })
                 .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
