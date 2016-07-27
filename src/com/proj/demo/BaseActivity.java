@@ -140,7 +140,7 @@ public abstract class BaseActivity extends FragmentActivity{
     }
 
     protected void setConnectionStatus(boolean connected) {
-        Log.d(MainActivity.APP_CODE,"setConnectionStatus" + (connected ? "Connected" : "Disconnected") );
+        Log.d(MainActivity.APP_CODE,"setConnectionStatus " + (connected ? "Connected" : "Disconnected") );
         listener.onChangeConnectionStatus(connected);
     }
 

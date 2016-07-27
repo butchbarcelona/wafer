@@ -35,6 +35,8 @@ public class LockerFragment extends BaseFragment implements View.OnClickListener
     SharedPreferences sharedPreferences;
 
 
+    Boolean isLocker1Used,isLocker2Used,isLocker3Used;
+
     Button btnAdd, btnMinus;
 
     TextView tv1, tv2;
@@ -43,14 +45,17 @@ public class LockerFragment extends BaseFragment implements View.OnClickListener
 
     int layoutId;
 
-    int secInterval = 60;//900;
-    int pricePerInterval = 1;//5;
+    int secInterval = 900;
+    int pricePerInterval = 5;
     CountDownTimerThread cdt1, cdt2, cdt3;
 
     LinearLayout llLocker1, llLocker2, llLocker3;
     TextView tvLabel1, tvLabel2, tvLabel3;
 
     public LockerFragment() {
+        isLocker1Used = false;
+        isLocker2Used = false;
+        isLocker3Used = false;
     }
 
     public LockerFragment setLayout(int layoutID) {
@@ -218,6 +223,7 @@ public class LockerFragment extends BaseFragment implements View.OnClickListener
                 if(price <= credits) {
                     ((MainActivity) LockerFragment.this.getActivity()).setCredits(credits - price);
                     payedForTime(id, idTime, total, idSetTime);
+                    dialog.dismiss();
                 }else
                     showDialog("Insufficient balance.");
                 }
@@ -244,13 +250,13 @@ public class LockerFragment extends BaseFragment implements View.OnClickListener
 
         switch(id){
             case R.id.ll_locker1:
-                ((MainActivity)LockerFragment.this.getActivity()).sendMsgToArduino("A");
+                ((MainActivity)LockerFragment.this.getActivity()).sendMsgToArduino("V");
                 break;
             case R.id.ll_locker2:
-                ((MainActivity)LockerFragment.this.getActivity()).sendMsgToArduino("B");
+                ((MainActivity)LockerFragment.this.getActivity()).sendMsgToArduino("X");
                 break;
             case R.id.ll_locker3:
-                ((MainActivity)LockerFragment.this.getActivity()).sendMsgToArduino("C");
+                ((MainActivity)LockerFragment.this.getActivity()).sendMsgToArduino("Z");
                 break;
         }
 
@@ -303,6 +309,7 @@ public class LockerFragment extends BaseFragment implements View.OnClickListener
                             editor.apply();
 
                             showDialogSetPhoneNumber(id);
+                            dialog.dismiss();
                         }else{
                             if(pass.equals(sharedPreferences.getString(finalIdSPPass,"")) || pass.equals("megaadk")){
 
@@ -409,9 +416,7 @@ public class LockerFragment extends BaseFragment implements View.OnClickListener
         final SharedPreferences.Editor editor = sharedPreferences.edit();
 
         AlertDialog dialog;
-        CustomAlertDialogBuilder builder = new CustomAlertDialogBuilder(LockerFragment.this.getActivity());
-
-        builder.setView(view)
+        new CustomAlertDialogBuilder(LockerFragment.this.getActivity()).setView(view)
         .setCancelable(false)
         .setPositiveButton("CONFIRM", new DialogInterface.OnClickListener() {
             @Override
@@ -454,7 +459,7 @@ public class LockerFragment extends BaseFragment implements View.OnClickListener
                         lockMin[0].setTextColor(Color.WHITE);
                         lockSec[0].setTextColor(Color.WHITE);
 
-                        ((MainActivity) LockerFragment.this.getActivity()).sendMsgToArduino("A");
+                        ((MainActivity) LockerFragment.this.getActivity()).sendMsgToArduino("U");
 
                         break;
                     case R.id.ll_locker2:
@@ -477,7 +482,7 @@ public class LockerFragment extends BaseFragment implements View.OnClickListener
                         lockMin[1].setTextColor(Color.WHITE);
                         lockSec[1].setTextColor(Color.WHITE);
 
-                        ((MainActivity) LockerFragment.this.getActivity()).sendMsgToArduino("B");
+                        ((MainActivity) LockerFragment.this.getActivity()).sendMsgToArduino("W");
                         break;
                     case R.id.ll_locker3:
                         if (cdt3 != null) cdt3.stopCount();
@@ -499,7 +504,7 @@ public class LockerFragment extends BaseFragment implements View.OnClickListener
                         lockMin[2].setTextColor(Color.WHITE);
                         lockSec[2].setTextColor(Color.WHITE);
 
-                        ((MainActivity) LockerFragment.this.getActivity()).sendMsgToArduino("C");
+                        ((MainActivity) LockerFragment.this.getActivity()).sendMsgToArduino("Y");
                         break;
                 }
                 dialog.dismiss();
@@ -512,9 +517,7 @@ public class LockerFragment extends BaseFragment implements View.OnClickListener
                 dialog.dismiss();
             }
         })
-        .setIcon(android.R.drawable.ic_dialog_alert);
-        dialog = builder.create();
-        dialog.show();
+        .setIcon(android.R.drawable.ic_dialog_alert).show();
 
     }
 

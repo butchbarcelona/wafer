@@ -11,6 +11,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.proj.demo.BaseActivity;
 import com.proj.demo.DeliverReceiver;
@@ -202,8 +203,9 @@ public class MainActivity extends BaseActivity implements BaseActivity.USBConnec
         int n = nMsg;//buffer[0];
 
 
+        Toast.makeText(this,",message:"+n+"",Toast.LENGTH_SHORT).show();
 
-        if(n == 5){
+        if(n == 555){
             credits += 5;
             tvCredits.setText(credits+"");
         }
@@ -247,6 +249,7 @@ public class MainActivity extends BaseActivity implements BaseActivity.USBConnec
 
     public void sendMsgToArduino(String message) {
         Log.d(MainActivity.APP_CODE, "sendMsgToArduino: message="+message );
+        Toast.makeText(this,"Sending message to arduino : "+message,Toast.LENGTH_SHORT);
         //byte buffer = (byte) ((((ToggleButton) v).isChecked()) ? 1 : 0); // Read button
 
         byte[] buffer = message.getBytes();
@@ -263,4 +266,6 @@ public class MainActivity extends BaseActivity implements BaseActivity.USBConnec
             }
         }
     }
+
+
 }
